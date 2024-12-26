@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { motion, AnimatePresence } from "framer-motion";
 import hero from "./../../assets/images/hero.png";
 import { CalanderNewIcon, DurationIcon, LocationIcon } from "../../utils/icons";
 import { EnquireModal } from "./EnquireModal";
@@ -65,11 +66,17 @@ export const HomeHero = () => {
           backgroundImage: `url(${hero})`
         }}
       >
-        <div className=" text-[55px] md:text-[60px] text-left font-extralight text-white">
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+          className="text-[55px] md:text-[60px] text-left font-extralight text-white"
+        >
           <span className="font-extrabold text-theme-green-color">Explore</span>{" "}
           <span className="font-extrabold text-white">the</span>{" "}
           <br className="" /> Island with Us
-        </div>
+        </motion.div>
+
         <div className="absolute w-[90%] md:w-[80%] px-5 pb-7 md:p-5 bg-white rounded-lg shadow-lg flex flex-col md:flex-row md:items-center justify-between bottom-[-40%] md:bottom-[-10%]">
           {/* Country Dropdown */}
           <div
@@ -80,30 +87,33 @@ export const HomeHero = () => {
               onClick={() => setIsCountryDropdownOpen(!isCountryDropdownOpen)}
               className="cursor-pointer text-theme-green-dark-color font-semibold flex items-center gap-2"
             >
-              <span className=" mr-1">
+              <span className="mr-1">
                 <LocationIcon />
               </span>{" "}
               {selectedCountry}
             </label>
-            <div
-              className={`absolute bg-white border border-gray-300 shadow-lg mt-2 w-[200px] rounded-lg z-10 transition-all duration-300 transform ${
-                isCountryDropdownOpen
-                  ? "opacity-100 scale-y-100"
-                  : "opacity-0 scale-y-0 origin-top"
-              }`}
-            >
-              <ul>
-                {countries.map((country, index) => (
-                  <li
-                    key={index}
-                    onClick={() => handleCountrySelect(country)}
-                    className="p-2 hover:bg-gray-100 cursor-pointer"
-                  >
-                    {country}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <AnimatePresence>
+              {isCountryDropdownOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="absolute bg-white border border-gray-300 shadow-lg mt-2 w-[200px] rounded-lg z-10"
+                >
+                  <ul>
+                    {countries.map((country, index) => (
+                      <li
+                        key={index}
+                        onClick={() => handleCountrySelect(country)}
+                        className="p-2 hover:bg-gray-100 cursor-pointer"
+                      >
+                        {country}
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* Duration Dropdown */}
@@ -115,30 +125,33 @@ export const HomeHero = () => {
               onClick={() => setIsDurationDropdownOpen(!isDurationDropdownOpen)}
               className="cursor-pointer text-theme-green-dark-color font-semibold flex items-center gap-2"
             >
-              <span className=" mr-1">
+              <span className="mr-1">
                 <DurationIcon />
               </span>{" "}
               {selectedDuration}
             </label>
-            <div
-              className={`absolute bg-white border border-gray-300 shadow-lg mt-2 w-[200px] rounded-lg z-10 transition-all duration-300 transform ${
-                isDurationDropdownOpen
-                  ? "opacity-100 scale-y-100"
-                  : "opacity-0 scale-y-0 origin-top"
-              }`}
-            >
-              <ul>
-                {durations.map((duration, index) => (
-                  <li
-                    key={index}
-                    onClick={() => handleDurationSelect(duration)}
-                    className="p-2 hover:bg-gray-100 cursor-pointer"
-                  >
-                    {duration}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <AnimatePresence>
+              {isDurationDropdownOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="absolute bg-white border border-gray-300 shadow-lg mt-2 w-[200px] rounded-lg z-10"
+                >
+                  <ul>
+                    {durations.map((duration, index) => (
+                      <li
+                        key={index}
+                        onClick={() => handleDurationSelect(duration)}
+                        className="p-2 hover:bg-gray-100 cursor-pointer"
+                      >
+                        {duration}
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* Inline Date Picker */}
@@ -147,31 +160,39 @@ export const HomeHero = () => {
               htmlFor="date-picker"
               className="cursor-pointer text-theme-green-dark-color font-semibold flex items-center gap-2"
             >
-              <span className=" mr-1">
+              <span className="mr-1">
                 <CalanderNewIcon />
               </span>
               {startDate ? startDate.toLocaleDateString() : "Select Start Date"}
             </label>
           </div>
 
-          <button
+          <motion.button
             onClick={() => setOpen((pre) => !pre)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             className="bg-theme-green-middle-color px-16 py-3 rounded-md shadow-md hover:bg-green-700 text-base text-theme-green-color"
           >
             Get a Quote
-          </button>
+          </motion.button>
         </div>
       </section>
       <DatePicker
         id="date-picker"
         selected={startDate}
         onChange={(date) => setStartDate(date)}
-        className="hidden"
-        withPortal // Use this prop to render the calendar in a portal
+        className="hidden "
+        withPortal
         placeholderText="Select a date"
       />
 
-      <EnquireModal open={open} setOpen={setOpen} />
+      <EnquireModal
+        selectedCountry={selectedCountry}
+        selectedDuration={selectedDuration}
+        startDate={startDate}
+        open={open}
+        setOpen={setOpen}
+      />
     </>
   );
 };

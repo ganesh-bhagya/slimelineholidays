@@ -9,25 +9,48 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { CloseIcon } from "../../utils/icons";
 
-export const EnquireModal = ({ open, setOpen }) => {
+export const EnquireModal = ({
+  open,
+  setOpen,
+  startDate,
+  selectedCountry,
+  selectedDuration
+}) => {
+  // Helper function to calculate departure date
+  const calculateDepartureDate = (startDate, duration) => {
+    const date = new Date(startDate);
+    date.setDate(date.getDate() + (parseInt(duration) || 0));
+    return date;
+  };
   // const [open, setOpen] = useState(true);
-
   const [formData, setFormData] = useState({
-    // tour: data.name,
     name: "",
     email: "",
     mobile: "",
     livingCountry: "",
     nationality: "",
-    destination: "",
-    arrivalDate: null,
-    departureDate: null,
+    destination: selectedCountry,
+    arrivalDate: startDate || null,
+    departureDate: startDate
+      ? calculateDepartureDate(startDate, selectedDuration)
+      : null,
     adults: "",
     children: "",
     flightStatus: "",
     holidayReason: "",
     message: ""
   });
+
+  // Synchronize departureDate whenever startDate or selectedDuration changes
+  useEffect(() => {
+    if (startDate && selectedDuration !== undefined) {
+      setFormData((prevData) => ({
+        ...prevData,
+        arrivalDate: startDate || null,
+        departureDate: calculateDepartureDate(startDate, selectedDuration)
+      }));
+    }
+  }, [startDate, selectedDuration]);
 
   const [errors, setErrors] = useState({});
 
@@ -50,7 +73,7 @@ export const EnquireModal = ({ open, setOpen }) => {
     if (!email) newErrors.email = "Email is required";
     if (!mobile) newErrors.mobile = "Mobile number is required";
     if (!livingCountry) newErrors.livingCountry = "Living country is required";
-    if (!nationality) newErrors.nationality = "Nationality is required";
+    // if (!nationality) newErrors.nationality = "Nationality is required";
     if (!destination) newErrors.destination = "Destination is required";
     if (!arrivalDate) newErrors.arrivalDate = "Arrival date is required";
     if (!departureDate) newErrors.departureDate = "Departure date is required";
@@ -64,9 +87,10 @@ export const EnquireModal = ({ open, setOpen }) => {
     const newErrors = validate();
     setErrors(newErrors);
 
+    console.log(newErrors);
     if (Object.keys(newErrors).length === 0) {
       try {
-        const response = await fetch("https://api.example.com/submit", {
+        const response = await fetch("http://localhost:5000/submit", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -76,6 +100,24 @@ export const EnquireModal = ({ open, setOpen }) => {
 
         if (response.ok) {
           alert("Form submitted successfully!");
+          setFormData({
+            name: "",
+            email: "",
+            mobile: "",
+            livingCountry: "",
+            nationality: "",
+            destination: selectedCountry,
+            arrivalDate: startDate || null,
+            departureDate: startDate
+              ? calculateDepartureDate(startDate, selectedDuration)
+              : null,
+            adults: "",
+            children: "",
+            flightStatus: "",
+            holidayReason: "",
+            message: ""
+          });
+          setOpen(false);
         } else {
           alert("Failed to submit the form. Try again.");
         }
@@ -430,6 +472,7 @@ const ArrivalDatePicker = ({ formData, setFormData, errors, setErrors }) => {
             setFormData({ ...formData, arrivalDate: date });
             setErrors({ ...errors, arrivalDate: "" });
           }}
+          value={formData.arrivalDate}
           placeholderText="Select date"
           className="w-full p-2 px-5 border border-[#008B02]       focus:outline-none focus:border-green-500 text-gray-700"
         />

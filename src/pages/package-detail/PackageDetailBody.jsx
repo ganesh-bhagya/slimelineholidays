@@ -65,7 +65,7 @@ export const PackageDetailBody = ({ data }) => {
 
     if (Object.keys(newErrors).length === 0) {
       try {
-        const response = await fetch("https://api.example.com/submit", {
+        const response = await fetch("http://localhost:5000/tour-submit", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -75,6 +75,22 @@ export const PackageDetailBody = ({ data }) => {
 
         if (response.ok) {
           alert("Form submitted successfully!");
+          setFormData({
+            tour: data.name,
+            name: "",
+            email: "",
+            mobile: "",
+            livingCountry: "",
+            nationality: "",
+            destination: "",
+            arrivalDate: null,
+            departureDate: null,
+            adults: "",
+            children: "",
+            flightStatus: "",
+            holidayReason: "",
+            message: ""
+          });
         } else {
           alert("Failed to submit the form. Try again.");
         }
