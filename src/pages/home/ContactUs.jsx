@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { motion, useAnimation } from "framer-motion";
+import { useInView } from "react-intersection-observer";
 import call from "./../../assets/images/icons/call.svg";
 import email from "./../../assets/images/icons/email.svg";
 import address from "./../../assets/images/icons/address.svg";
@@ -12,6 +14,15 @@ export const ContactUs = ({ scrollRef }) => {
     message: ""
   });
   const [errors, setErrors] = useState({});
+
+  const controls = useAnimation();
+  const [ref, inView] = useInView({ threshold: 0.2 });
+
+  React.useEffect(() => {
+    if (inView) {
+      controls.start({ opacity: 1, y: 0 });
+    }
+  }, [controls, inView]);
 
   // Validation function
   const validate = () => {
@@ -31,7 +42,8 @@ export const ContactUs = ({ scrollRef }) => {
 
     if (Object.keys(newErrors).length === 0) {
       try {
-        const response = await fetch("https://api.example.com/contact", {
+        // const response = await fetch("http://localhost:5000/contact", {
+        const response = await fetch("https://backend.slimlineholidays.com/contact", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -60,11 +72,19 @@ export const ContactUs = ({ scrollRef }) => {
 
   return (
     <section
-      ref={scrollRef}
+      ref={(node) => {
+        ref(node); // Combine ref for animation
+        scrollRef.current = node; // Assign scrollRef
+      }}
       className="md:px-[10%] px-[5%] w-full flex flex-col md:flex-row justify-between py-[4%] pb-[10%] md:pb-[4%] font-nunito"
     >
       {/* Contact Info */}
-      <div className="md:w-[49%] flex flex-col items-center md:items-start pt-10 md:pt-0">
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={controls}
+        transition={{ duration: 0.8 }}
+        className="md:w-[49%] flex flex-col items-center md:items-start pt-10 md:pt-0"
+      >
         <div className="text-[25px] md:text-[50px] font-light">
           <span className="font-bold">Contact</span> Us
         </div>
@@ -107,10 +127,13 @@ export const ContactUs = ({ scrollRef }) => {
             </div>
           ))}
         </div>
-      </div>
+      </motion.div>
 
       {/* Contact Form */}
-      <form
+      <motion.form
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={controls}
+        transition={{ duration: 0.8, delay: 0.2 }}
         onSubmit={handleSubmit}
         className="mt-10 md:mt-0 md:w-[45%] flex flex-col gap-4 bg-[#F1FFF2] border border-[#9AFFB3] p-7 items-center"
       >
@@ -157,7 +180,7 @@ export const ContactUs = ({ scrollRef }) => {
         >
           Submit
         </button>
-      </form>
+      </motion.form>
     </section>
   );
 };

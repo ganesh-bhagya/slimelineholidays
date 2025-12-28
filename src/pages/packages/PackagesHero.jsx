@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import hero from "./../../assets/images/packageshero.png";
+import hero from "./../../assets/images/packageshero.jpg";
 
 export const PackagesHero = () => {
   return (
