@@ -90,7 +90,8 @@ export const EnquireModal = ({
     console.log(newErrors);
     if (Object.keys(newErrors).length === 0) {
       try {
-        const response = await fetch("http://localhost:5000/submit", {
+        // const response = await fetch("http://localhost:5000/submit", {
+        const response = await fetch("https://backend.slimlineholidays.com/submit", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"

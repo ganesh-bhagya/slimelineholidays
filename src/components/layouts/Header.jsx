@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "./../../assets/images/logo.png";
+import logowhite from "./../../assets/images/logowhite.png";
 import { HamburgerIcon, CloseIcon } from "../../utils/icons";
 import { motion } from "framer-motion";
 
@@ -156,7 +157,8 @@ export const Header = ({ scrollRefs }) => {
         }}
       >
         <Link to="/" className="w-[60%] md:w-[25%] overflow-hidden md:hidden">
-          <img src={logo} alt="" />
+        <img src={isScrolled ? logo : logowhite} alt="" />
+       
         </Link>
         <div className="w-[30%] hidden md:flex items-center justify-between">
           {navigationItems.slice(0, 4).map((item, itemIndex) => (
@@ -173,7 +175,7 @@ export const Header = ({ scrollRefs }) => {
           ))}
         </div>
         <Link to="/"  className="w-[60%] md:w-[25%] hidden md:block overflow-hidden">
-          <img src={logo} alt="" />
+        <img src={isScrolled ? logowhite : logo} alt="" />
         </Link>
         <div className="w-[30%] hidden md:flex items-center justify-between">
           {navigationItems.slice(4, 8).map((item, itemIndex) => (

@@ -2,8 +2,8 @@ import React from "react";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import CountUp from "react-countup";
-import abtus from "./../../assets/images/aboutus.png";
-import abtus2 from "./../../assets/images/abtus2.png";
+import abtus from "./../../assets/images/aboutus.jpg";
+import abtus2 from "./../../assets/images/abtus2.jpg";
 
 export const AboutUs = ({ scrollRef }) => {
   const controls = useAnimation();
@@ -109,7 +109,8 @@ export const AboutUs = ({ scrollRef }) => {
       >
         <div className="flex flex-col justify-center items-center">
           <span className="text-[50px] text-center text-theme-green-middle-color font-bold">
-            {inView && <CountUp end={200} duration={3} />}
+         200   
+         {/* {inView && <CountUp end={200} duration={3} />} */}
           </span>
           <span className="text-base text-center text-black font-light">
             Amazing Tours
@@ -117,7 +118,8 @@ export const AboutUs = ({ scrollRef }) => {
         </div>
         <div className="flex flex-col justify-center items-center">
           <span className="text-[50px] text-center text-theme-green-middle-color font-bold">
-            {inView && <CountUp end={150} duration={3} />}
+         150   
+         {/* {inView && <CountUp end={150} duration={3} />} */}
           </span>
           <span className="text-base text-center text-black font-light">
             Happy Clients
@@ -125,7 +127,8 @@ export const AboutUs = ({ scrollRef }) => {
         </div>
         <div className="flex flex-col justify-center items-center">
           <span className="text-[50px] text-center text-theme-green-middle-color font-bold">
-            {inView && <CountUp end={20} duration={3} />}
+           20
+            {/* {inView && <CountUp end={20} duration={3} />} */}
           </span>
           <span className="text-base text-center text-black font-light">
             Years in Business

@@ -1,7 +1,6 @@
 import React from "react";
-import kandy from "./../../assets/images/pakcages/kandy.png";
-import sigiriya from "./../../assets/images/pakcages/sigiriya.png";
-import yala from "./../../assets/images/pakcages/yala.png";
+import { motion, useAnimation } from "framer-motion";
+import { useInView } from "react-intersection-observer";
 import { StarWhiteIcon, StarYellowIcon } from "../../utils/icons";
 import { Link } from "react-router-dom";
 import { packages } from "../../utils/dataArrays";
@@ -21,7 +20,7 @@ export const PackagesBody = () => {
           Sri Lanka Tour Packages
         </div>
 
-        <div className=" flex justify-between w-full flex-col md:flex-row mt-5 ">
+        <div className=" flex  gap-[1%] w-full flex-col flex-wrap md:flex-row mt-5 ">
           {packages
             .filter((item) => item.country === "Sri Lanka")
             .map((item, packageIndex) => {
@@ -32,9 +31,9 @@ export const PackagesBody = () => {
           Maldives Tour Packages
         </div>
 
-        <div className=" flex justify-between w-full flex-col md:flex-row mt-5 ">
+        <div className=" flex  gap-[1%] w-full flex-col  flex-wrap md:flex-row mt-5 ">
           {packages
-            .filter((item) => item.country === "Sri Lanka")
+            .filter((item) => item.country === "Maldives")
             .map((item, packageIndex) => {
               return <PakcageCard data={item} />;
             })}
@@ -43,9 +42,9 @@ export const PackagesBody = () => {
           UAE Tour Packages
         </div>
 
-        <div className=" flex justify-between w-full flex-col md:flex-row mt-5 ">
+        <div className=" flex  gap-[1%] w-full flex-col  flex-wrap md:flex-row mt-5 ">
           {packages
-            .filter((item) => item.country === "Sri Lanka")
+            .filter((item) => item.country === "UAE")
             .map((item, packageIndex) => {
               return <PakcageCard data={item} />;
             })}
@@ -56,50 +55,69 @@ export const PackagesBody = () => {
 };
 
 const PakcageCard = ({ data }) => {
+  const controls = useAnimation();
+  const [ref, inView] = useInView({ threshold: 0.2 });
+
+  React.useEffect(() => {
+    if (inView) {
+      controls.start({ opacity: 1, y: 0 });
+    }
+  }, [controls, inView]);
+
   return (
-    <>
-      <div className=" flex flex-col md:w-[23%] aspect-[1/1.3] mb-10">
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 30 }}
+      animate={controls}
+      transition={{ duration: 0.8 }}
+      className="flex flex-col md:w-[24%] aspect-[1/1.5] mb-10 group overflow-hidden"
+    >
+      {/* Wrapper with gradient */}
+      <div className="w-full h-full relative flex flex-col overflow-hidden  justify-end p-3 pb-3">
+        {/* Gradient Layer */}
         <div
-          className="w-full h-full relative flex flex-col justify-end p-3 pb-3"
+          className="absolute inset-0 bg-gradient-to-b from-transparent to-black z-10 pointer-events-none"
+        ></div>
+
+        {/* Scaling Image Layer */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat transform scale-100 transition-transform duration-500 group-hover:scale-110"
           style={{
-            backgroundImage: `url(${data.image}), linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%)`,
-            backgroundPosition: "center",
-            backgroundSize: "cover",
-            backgroundRepeat: "no-repeat",
-            backgroundBlendMode: "overlay" // Ensures the gradient blends with the image
+            backgroundImage: `url(${data.image})`,
           }}
-        >
-          <span className=" absolute right-2 top-2 bg-theme-green-color p-2 px-5 text-black font-semibold text-[14px]">
-            {data.days} Days
-          </span>
-          <div className=" text-white text-[14px] mb-3 ">{data.name}</div>
-          <div className=" flex justify-between w-full items-end text-white">
-            <div className=" flex flex-col gap-[2px]">
-              <span className=" text-[10px] font-semibold "> From</span>
-              <span className=" text-[25px] font-bold "> $ {data.price}</span>
-              <span className=" text-[10px] font-semibold "> per person</span>
-            </div>
-            <div className=" flex flex-col gap-2 items-end">
-              <span className="  bg-theme-green-middle-color p-1 px-3 text-white font-semibold text-[10px] mb-1 w-fit">
-                Sri Lanka
-              </span>
-              <div className=" flex items-center gap-1">
-                <StarWhiteIcon />
-                <StarYellowIcon />
-                <StarYellowIcon />
-                <StarYellowIcon />
-                <StarYellowIcon />
-              </div>
+        ></div>
+
+        {/* Content */}
+        <span className="absolute right-2 top-2 bg-theme-green-color p-2 px-5 text-black font-semibold text-[14px] z-20">
+          {data.days} Days
+        </span>
+        <div className="text-white text-[14px] mb-3 z-20">{data.name}</div>
+        <div className="flex justify-between w-full items-end text-white z-20">
+          <div className="flex flex-col gap-[2px]">
+            <span className="text-[10px] font-semibold"> From</span>
+            <span className="text-[25px] font-bold"> $ {data.price}</span>
+            <span className="text-[10px] font-semibold"> per person</span>
+          </div>
+          <div className="flex flex-col gap-2 items-end">
+            <span className="bg-theme-green-middle-color p-1 px-3 text-white font-semibold text-[10px] mb-1 w-fit">
+              Sri Lanka
+            </span>
+            <div className="flex items-center gap-1">
+              <StarWhiteIcon />
+              <StarYellowIcon />
+              <StarYellowIcon />
+              <StarYellowIcon />
+              <StarYellowIcon />
             </div>
           </div>
         </div>
-        <Link
-          to={`/packages/${data.slug}`}
-          className=" bg-theme-green-middle-color w-full flex justify-center items-center text-white text-[16px] mt-3 py-3"
-        >
-          Explore
-        </Link>
       </div>
-    </>
+      <Link
+        to={`/packages/${data.slug}`}
+        className="bg-theme-green-middle-color hover:bg-transparent border border-theme-green-middle-color  w-full flex justify-center items-center text-white hover:text-theme-green-middle-color transition-colors duration-300 ease-in-out text-[16px] mt-3 py-3"
+      >
+        Explore
+      </Link>
+    </motion.div>
   );
 };

@@ -65,7 +65,8 @@ export const PackageDetailBody = ({ data }) => {
 
     if (Object.keys(newErrors).length === 0) {
       try {
-        const response = await fetch("http://localhost:5000/tour-submit", {
+        // const response = await fetch("http://localhost:5000/tour-submit", {
+        const response = await fetch("https://backend.slimlineholidays.com/tour-submit", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -103,7 +104,7 @@ export const PackageDetailBody = ({ data }) => {
 
   return (
     <>
-      <section className="px-[5%] md:px-[10%] w-full bg-white flex flex-col md:flex-row md:justify-between md:items-start justify-center items-center md:py-[4%] pt-[55%] md:pt-[8%] font-nunito">
+      <section className="px-[5%] md:px-[10%] w-full bg-white flex flex-col md:flex-row md:justify-between md:items-start justify-center items-center md:py-[4%] pt-[20%] md:pt-[3%] font-nunito">
         <div className="flex flex-col md:w-[60%]">
           {/* Section Toggle */}
           <div className="flex items-center justify-between md:justify-start w-full md:gap-10">
@@ -675,7 +676,7 @@ const Summary = ({ data }) => {
     <div className="mt-5 flex flex-col p-4 border border-theme-green-color w-full">
       <div className="text-black font-bold text-[20px] mb-3">Summary</div>
       <span className="text-base text-black mb-3">
-        {data.summary.description}
+        {data.summary?.description}
       </span>
       <div className="text-theme-green-middle-color font-bold text-[20px] mb-3 mt-10">
         Activities Covered
@@ -761,14 +762,24 @@ const Inclusion = ({ data }) => {
 };
 
 const Itinerary = ({ data }) => {
-  const [open, setOpen] = useState(1);
-  const handleOpen = (value) => setOpen(open === value ? 0 : value);
+  const [open, setOpen] = useState([1]);
+
+  const handleOpen = (value) => {
+    if (open.includes(value)) {
+      // If it's already open, close it by filtering it out
+      setOpen(open.filter((item) => item !== value));
+    } else {
+      // Otherwise, add it to the list of open accordions
+      setOpen([...open, value]);
+    }
+  };
+
   return (
     <div className="mt-5 flex flex-col p-2 font-nunito border border-theme-green-color w-full">
       {data.itinerary.map((day, index) => (
         <Accordion
           key={index}
-          open={open === index + 1}
+          open={open.includes(index + 1)}
           className="mb-3 font-nunito"
         >
           <AccordionHeader
@@ -780,28 +791,27 @@ const Itinerary = ({ data }) => {
                 {day.day}
               </span>
               <span className="w-[5%] 3xl:text-lg text-[26px] font-semibold">
-                {open === index + 1 ? "+" : "-"}
+                {open.includes(index + 1) ? "+" : "-"}
               </span>
             </div>
           </AccordionHeader>
           <AccordionBody className="p-2 bg-white mt-4">
             <div className="flex flex-col relative w-full gap-2 items-start">
-              <div className="text-black  font-nunitotext-base font-normal">
-                {day.details.map((detail, i) => {
-                  return <p className="mb-3">{detail}</p>;
+              <div className="text-black font-nunito text-base font-normal">
+                {day.details?.map((detail, i) => {
+                  return <p key={i} className="mb-3">{detail}</p>;
                 })}
               </div>
               <div className="w-full overflow-hidden">
                 <img src={day.image} className="object-cover w-full" alt="" />
               </div>
-
               {day.activities.map((activity, i) => {
                 return (
-                  <>
+                  <div key={i}>
                     <div className="text-black font-nunito font-bold text-base mb-2 mt-6">
                       {activity.title}
                     </div>
-                    <div className=" flex flex-col w-full gap-1">
+                    <div className="flex flex-col w-full gap-1">
                       {activity.list_items.map((item, index) => (
                         <div
                           key={index}
@@ -814,7 +824,7 @@ const Itinerary = ({ data }) => {
                         </div>
                       ))}
                     </div>
-                  </>
+                  </div>
                 );
               })}
             </div>

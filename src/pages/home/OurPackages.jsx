@@ -1,9 +1,6 @@
 import React from "react";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import kandy from "./../../assets/images/pakcages/kandy.png";
-import sigiriya from "./../../assets/images/pakcages/sigiriya.png";
-import yala from "./../../assets/images/pakcages/yala.png";
 import { StarWhiteIcon, StarYellowIcon } from "../../utils/icons";
 import { packages } from "../../utils/dataArrays";
 import { Link } from "react-router-dom";
@@ -34,7 +31,7 @@ export const OurPackages = () => {
           Sri Lanka Tour Packages
         </motion.div>
 
-        <div className="flex justify-between w-full flex-col md:flex-row mt-5">
+        <div className="flex gap-[1%] w-full flex-col md:flex-row md:flex-wrap mt-5">
           {packages
             .filter((item) => item.country === "Sri Lanka")
             .map((item, packageIndex) => {
@@ -51,9 +48,9 @@ export const OurPackages = () => {
           Maldives Tour Packages
         </motion.div>
 
-        <div className="flex justify-between w-full flex-col md:flex-row mt-5">
+        <div className="flex  gap-[1%] w-full flex-col md:flex-row md:flex-wrap mt-5">
           {packages
-            .filter((item) => item.country === "Sri Lanka")
+            .filter((item) => item.country === "Maldives")
             .map((item, packageIndex) => {
               return <PakcageCard key={packageIndex} data={item} />;
             })}
@@ -68,9 +65,9 @@ export const OurPackages = () => {
           UAE Tour Packages
         </motion.div>
 
-        <div className="flex justify-between w-full flex-col md:flex-row mt-5">
+        <div className="flex gap-[1%] w-full flex-col md:flex-row md:flex-wrap mt-5">
           {packages
-            .filter((item) => item.country === "Sri Lanka")
+            .filter((item) => item.country === "UAE")
             .map((item, packageIndex) => {
               return <PakcageCard key={packageIndex} data={item} />;
             })}
@@ -96,23 +93,29 @@ const PakcageCard = ({ data }) => {
       initial={{ opacity: 0, y: 30 }}
       animate={controls}
       transition={{ duration: 0.8 }}
-      className="flex flex-col md:w-[24%] aspect-[1/1.3] mb-10"
+      className="flex flex-col md:w-[24%] aspect-[1/1.5] mb-10 group overflow-hidden"
     >
-      <div
-        className="w-full h-full relative flex flex-col justify-end p-3 pb-3"
-        style={{
-          backgroundImage: `url(${data.image}), linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%)`,
-          backgroundPosition: "center",
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          backgroundBlendMode: "overlay", // Ensures the gradient blends with the image
-        }}
-      >
-        <span className="absolute right-2 top-2 bg-theme-green-color p-2 px-5 text-black font-semibold text-[14px]">
+      {/* Wrapper with gradient */}
+      <div className="w-full h-full relative flex flex-col overflow-hidden  justify-end p-3 pb-3">
+        {/* Gradient Layer */}
+        <div
+          className="absolute inset-0 bg-gradient-to-b from-transparent to-black z-10 pointer-events-none"
+        ></div>
+
+        {/* Scaling Image Layer */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat transform scale-100 transition-transform duration-500 group-hover:scale-110"
+          style={{
+            backgroundImage: `url(${data.image})`,
+          }}
+        ></div>
+
+        {/* Content */}
+        <span className="absolute right-2 top-2 bg-theme-green-color p-2 px-5 text-black font-semibold text-[14px] z-20">
           {data.days} Days
         </span>
-        <div className="text-white text-[14px] mb-3 ">{data.name}</div>
-        <div className="flex justify-between w-full items-end text-white">
+        <div className="text-white text-[14px] mb-3 z-20">{data.name}</div>
+        <div className="flex justify-between w-full items-end text-white z-20">
           <div className="flex flex-col gap-[2px]">
             <span className="text-[10px] font-semibold"> From</span>
             <span className="text-[25px] font-bold"> $ {data.price}</span>
@@ -134,7 +137,7 @@ const PakcageCard = ({ data }) => {
       </div>
       <Link
         to={`/packages/${data.slug}`}
-        className="bg-theme-green-middle-color w-full flex justify-center items-center text-white text-[16px] mt-3 py-3"
+        className="bg-theme-green-middle-color hover:bg-transparent border border-theme-green-middle-color  w-full flex justify-center items-center text-white hover:text-theme-green-middle-color transition-colors duration-300 ease-in-out text-[16px] mt-3 py-3"
       >
         Explore
       </Link>

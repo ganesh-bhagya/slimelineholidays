@@ -79,7 +79,10 @@ export const HomeHero = () => {
 
         <div className="absolute w-[90%] md:w-[80%] px-5 pb-7 md:p-5 bg-white rounded-lg shadow-lg flex flex-col md:flex-row md:items-center justify-between bottom-[-40%] md:bottom-[-10%]">
           {/* Country Dropdown */}
-          <div
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
             className="relative py-5 border-b md:py-0 md:border-none "
             ref={countryDropdownRef}
           >
@@ -114,10 +117,13 @@ export const HomeHero = () => {
                 </motion.div>
               )}
             </AnimatePresence>
-          </div>
+          </motion.div>
 
           {/* Duration Dropdown */}
-          <div
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
             className="relative py-5 border-b md:py-0 md:border-none "
             ref={durationDropdownRef}
           >
@@ -152,10 +158,15 @@ export const HomeHero = () => {
                 </motion.div>
               )}
             </AnimatePresence>
-          </div>
+          </motion.div>
 
           {/* Inline Date Picker */}
-          <div className="relative py-5 border-b md:py-0 md:border-none ">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+            className="relative py-5 border-b md:py-0 md:border-none "
+          >
             <label
               htmlFor="date-picker"
               className="cursor-pointer text-theme-green-dark-color font-semibold flex items-center gap-2"
@@ -165,7 +176,7 @@ export const HomeHero = () => {
               </span>
               {startDate ? startDate.toLocaleDateString() : "Select Start Date"}
             </label>
-          </div>
+          </motion.div>
 
           <motion.button
             onClick={() => setOpen((pre) => !pre)}

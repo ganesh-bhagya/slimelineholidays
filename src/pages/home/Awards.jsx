@@ -7,7 +7,7 @@ import "swiper/css/grid";
 import "swiper/css/pagination";
 import { Grid, Pagination, Autoplay } from "swiper/modules";
 
-import abtus from "./../../assets/images/awardsbg.png";
+import abtus from "./../../assets/images/awardsbg.jpg";
 import certificatw from "./../../assets/images/certificate/certificate.png";
 
 export const Awards = ({ scrollRef }) => {

@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import logo from "./../../assets/images/logo.png";
-import footerimg from "./../../assets/images/footer.png";
+import footerimg from "./../../assets/images/footer.jpg";
 import call from "./../../assets/images/icons/call.svg";
 import email from "./../../assets/images/icons/email.svg";
 import address from "./../../assets/images/icons/address.svg";

@@ -28,7 +28,7 @@ export const PackageDetailHero = ({data}) => {
           </div>{" "}
         </div>
 
-        <div className="absolute w-[90%] md:w-[80%] px-5 p-7 md:p-5 bg-[#F1FFF2] rounded-lg shadow-lg flex flex-col md:flex-row md:items-center justify-between bottom-[-40%] md:bottom-[-10%]">
+        <div className="absolute hidden w-[90%] md:w-[80%] px-5 p-7 md:p-5 bg-[#F1FFF2] rounded-lg shadow-lg flex flex-col md:flex-row md:items-center justify-between bottom-[-40%] md:bottom-[-10%]">
           <div className=" flex md:w-[20%] items-center  gap-2 mb-5 md:mb-0">
             <span className=" mr-1">
               <AccomadationIcon />
