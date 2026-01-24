@@ -12,6 +12,8 @@ import { FAQ } from "./FAQ";
 import { Testimonials } from "./Testimonials";
 import { ContactUs } from "./ContactUs";
 import NavigationContext from "../../contexts/NavigationContext";
+import SEO from "../../components/seo/SEO";
+import { OrganizationSchema } from "../../components/seo/StructuredData";
 
 export const Home = () => {
   const scrollRefs = useContext(NavigationContext);
@@ -22,6 +24,13 @@ export const Home = () => {
   }, []);
   return (
     <>
+      <SEO
+        title="Slimeline Holidays - Best Travel Packages in Sri Lanka, Maldives & UAE"
+        description="Discover amazing travel packages to Sri Lanka, Maldives, and UAE. Book your perfect holiday with our expert travel services, exclusive deals, and personalized itineraries."
+        keywords="travel packages, Sri Lanka tours, Maldives holidays, UAE packages, travel agency, holiday packages, Sri Lanka travel, Maldives vacation, UAE tourism"
+        url="/"
+      />
+      <OrganizationSchema />
       <Header scrollRefs={scrollRefs} />
       <HomeHero />
       <OurPackages />

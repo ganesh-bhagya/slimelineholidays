@@ -7,14 +7,14 @@ import "swiper/css/grid";
 import "swiper/css/pagination";
 import { Grid, Pagination, Autoplay } from "swiper/modules";
 
-import gallery1 from "./../../assets/images/gallery/gallery1.png";
-import gallery2 from "./../../assets/images/gallery/gallery2.png";
-import gallery3 from "./../../assets/images/gallery/gallery3.png";
-import gallery4 from "./../../assets/images/gallery/gallery4.png";
-import gallery5 from "./../../assets/images/gallery/gallery5.png";
-import gallery6 from "./../../assets/images/gallery/gallery6.png";
-import gallery7 from "./../../assets/images/gallery/gallery7.png";
-import gallery8 from "./../../assets/images/gallery/gallery8.png";
+import gallery1 from "./../../assets/images/gallery/gallery1.webp";
+import gallery2 from "./../../assets/images/gallery/gallery2.webp";
+import gallery3 from "./../../assets/images/gallery/gallery3.webp";
+import gallery4 from "./../../assets/images/gallery/gallery4.webp";
+import gallery5 from "./../../assets/images/gallery/gallery5.webp";
+import gallery6 from "./../../assets/images/gallery/gallery6.webp";
+import gallery7 from "./../../assets/images/gallery/gallery7.webp";
+import gallery8 from "./../../assets/images/gallery/gallery8.webp";
 
 export const Gallery = ({ scrollRef }) => {
   const swiperRef = useRef(null);

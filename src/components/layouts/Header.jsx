@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import logo from "./../../assets/images/logo.png";
-import logowhite from "./../../assets/images/logowhite.png";
+import logo from "./../../assets/images/logo.webp";
+import logowhite from "./../../assets/images/logowhite.webp";
 import { HamburgerIcon, CloseIcon } from "../../utils/icons";
 import { motion } from "framer-motion";
 

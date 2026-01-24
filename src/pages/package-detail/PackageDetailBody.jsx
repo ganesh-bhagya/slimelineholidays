@@ -7,6 +7,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { CorectIcon, WrongIcon } from "../../utils/icons";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import Select from "react-select";
 
 export const PackageDetailBody = ({ data }) => {
   const [section, setSection] = useState("itinerary");
@@ -29,6 +30,7 @@ export const PackageDetailBody = ({ data }) => {
   });
 
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   // Validation
   const validate = () => {
@@ -64,9 +66,10 @@ export const PackageDetailBody = ({ data }) => {
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
+      setLoading(true);
       try {
-        // const response = await fetch("http://localhost:5000/tour-submit", {
-        const response = await fetch("https://backend.slimlineholidays.com/tour-submit", {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+        const response = await fetch(`${apiUrl}/enquiries`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -98,6 +101,8 @@ export const PackageDetailBody = ({ data }) => {
       } catch (error) {
         console.error("Error:", error);
         alert("Error occurred while submitting the form.");
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -291,9 +296,17 @@ export const PackageDetailBody = ({ data }) => {
 
             <button
               onClick={handleSubmit}
-              className="p-2 w-fit px-16 border border-[#038B06] text-[#038B06] mt-5 "
+              disabled={loading}
+              className="p-2 w-fit px-16 border border-[#038B06] text-[#038B06] mt-5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              Submit
+              {loading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-[#038B06] border-t-transparent rounded-full animate-spin"></div>
+                  <span>Submitting...</span>
+                </>
+              ) : (
+                "Submit"
+              )}
             </button>
           </div>
         </div>
@@ -304,13 +317,13 @@ export const PackageDetailBody = ({ data }) => {
 
 const NationalityDropdown = ({ formData, setFormData, errors, setErrors }) => {
   const [countries, setCountries] = useState([]);
-  const [selectedNationality, setSelectedNationality] = useState("");
+  const [selectedNationality, setSelectedNationality] = useState(null);
 
   // Fetch countries and create nationalities
   useEffect(() => {
     const fetchCountries = async () => {
       try {
-        const response = await fetch("https://restcountries.com/v3.1/all");
+        const response = await fetch("https://restcountries.com/v3.1/all?fields=name,demonyms,flags");
         const data = await response.json();
 
         const formattedNationalities = data
@@ -318,17 +331,24 @@ const NationalityDropdown = ({ formData, setFormData, errors, setErrors }) => {
             const nationality =
               country.demonyms?.eng?.m || `${country.name.common} Citizen`;
             return {
-              countryName: country.name.common,
-              nationality: nationality
+              value: nationality,
+              label: nationality
             };
           })
-          .sort((a, b) => a.nationality.localeCompare(b.nationality)); // Sort alphabetically
+          .sort((a, b) => a.label.localeCompare(b.label)); // Sort alphabetically
 
         setCountries(formattedNationalities);
-        setFormData({
-          ...formData,
-          nationality: formattedNationalities[0]?.nationality || ""
-        });
+        if (formattedNationalities.length > 0 && !formData.nationality) {
+          const defaultNationality = formattedNationalities[0];
+          setSelectedNationality(defaultNationality);
+          setFormData({
+            ...formData,
+            nationality: defaultNationality.value
+          });
+        } else if (formData.nationality) {
+          const current = formattedNationalities.find(c => c.value === formData.nationality);
+          if (current) setSelectedNationality(current);
+        }
       } catch (error) {
         console.error("Error fetching countries:", error);
       }
@@ -338,27 +358,37 @@ const NationalityDropdown = ({ formData, setFormData, errors, setErrors }) => {
   }, []);
 
   return (
-    <div className="w-full  mt-5">
+    <div className="w-full mt-5">
       <label className="block text-gray-700 font-medium mb-2">
         Nationality
       </label>
-      <select
-        value={formData.nationality}
-        onChange={(e) => {
-          setFormData({ ...formData, nationality: e.target.value });
+      <Select
+        value={selectedNationality}
+        onChange={(selected) => {
+          setSelectedNationality(selected);
+          setFormData({ ...formData, nationality: selected?.value || "" });
           setErrors({ ...errors, nationality: "" });
         }}
-        className="block w-full p-3 border border-[#008B02]  bg-white text-gray-700 focus:outline-none focus:border-green-500"
-      >
-        <option value="" disabled>
-          Select your nationality
-        </option>
-        {countries.map((country, index) => (
-          <option key={index} value={country.nationality}>
-            {country.nationality}
-          </option>
-        ))}
-      </select>
+        options={countries}
+        isSearchable
+        placeholder="Select your nationality"
+        className="react-select-container"
+        classNamePrefix="react-select"
+        styles={{
+          control: (base) => ({
+            ...base,
+            borderColor: "#008B02",
+            "&:hover": {
+              borderColor: "#008B02"
+            },
+            boxShadow: "none"
+          }),
+          menu: (base) => ({
+            ...base,
+            zIndex: 9999
+          })
+        }}
+      />
       {errors.nationality && (
         <span className="text-red-500">{errors.nationality}</span>
       )}
@@ -460,26 +490,34 @@ const HolidayDropdown = ({ formData, setFormData, errors, setErrors }) => {
 
 const CountryDropdown = ({ formData, setFormData, errors, setErrors }) => {
   const [countries, setCountries] = useState([]);
-  const [selectedCountry, setSelectedCountry] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState(null);
 
   // Fetch country list from REST Countries API
   useEffect(() => {
     const fetchCountries = async () => {
       try {
-        const response = await fetch("https://restcountries.com/v3.1/all");
+        const response = await fetch("https://restcountries.com/v3.1/all?fields=name,flags");
         const data = await response.json();
 
         const formattedCountries = data
           .map((country) => ({
-            name: country.name.common
+            value: country.name.common,
+            label: country.name.common
           }))
-          .sort((a, b) => a.name.localeCompare(b.name)); // Sort alphabetically
+          .sort((a, b) => a.label.localeCompare(b.label)); // Sort alphabetically
 
         setCountries(formattedCountries);
-        setFormData({
-          ...formData,
-          livingCountry: formattedCountries[0]?.name
-        });
+        if (formattedCountries.length > 0 && !formData.livingCountry) {
+          const defaultCountry = formattedCountries[0];
+          setSelectedCountry(defaultCountry);
+          setFormData({
+            ...formData,
+            livingCountry: defaultCountry.value
+          });
+        } else if (formData.livingCountry) {
+          const current = formattedCountries.find(c => c.value === formData.livingCountry);
+          if (current) setSelectedCountry(current);
+        }
       } catch (error) {
         console.error("Error fetching countries:", error);
       }
@@ -493,23 +531,33 @@ const CountryDropdown = ({ formData, setFormData, errors, setErrors }) => {
       <label className="block text-gray-700 font-medium mb-2">
         Living Country
       </label>
-      <select
-        value={formData.livingCountry}
-        onChange={(e) => {
-          setFormData({ ...formData, livingCountry: e.target.value });
+      <Select
+        value={selectedCountry}
+        onChange={(selected) => {
+          setSelectedCountry(selected);
+          setFormData({ ...formData, livingCountry: selected?.value || "" });
           setErrors({ ...errors, livingCountry: "" });
         }}
-        className="block w-full p-3 border border-[#008B02]  bg-white text-gray-700 focus:outline-none focus:border-green-500"
-      >
-        <option value="" disabled>
-          Select a country
-        </option>
-        {countries.map((country, index) => (
-          <option key={index} value={country.name}>
-            {country.name}
-          </option>
-        ))}
-      </select>
+        options={countries}
+        isSearchable
+        placeholder="Select a country"
+        className="react-select-container"
+        classNamePrefix="react-select"
+        styles={{
+          control: (base) => ({
+            ...base,
+            borderColor: "#008B02",
+            "&:hover": {
+              borderColor: "#008B02"
+            },
+            boxShadow: "none"
+          }),
+          menu: (base) => ({
+            ...base,
+            zIndex: 9999
+          })
+        }}
+      />
       {errors.livingCountry && (
         <span className="text-red-500">{errors.livingCountry}</span>
       )}
@@ -519,28 +567,31 @@ const CountryDropdown = ({ formData, setFormData, errors, setErrors }) => {
 
 const MobileNumberInput = ({ formData, setFormData, errors, setErrors }) => {
   const [countries, setCountries] = useState([]);
-  const [selectedCountry, setSelectedCountry] = useState({});
-  const [mobileNumber, setMobileNumber] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState(null);
 
   // Fetch countries from REST Countries API
   useEffect(() => {
     const fetchCountries = async () => {
       try {
-        const response = await fetch("https://restcountries.com/v3.1/all");
+        const response = await fetch("https://restcountries.com/v3.1/all?fields=name,idd,flags");
         const data = await response.json();
 
         const formattedCountries = data
           .map((country) => ({
-            name: country.name.common,
+            label: country.name.common,
+            value: country.name.common,
             code:
               country.idd.root +
               (country.idd.suffixes ? country.idd.suffixes[0] : ""),
             flag: country.flags.svg
           }))
-          .filter((country) => country.code);
+          .filter((country) => country.code)
+          .sort((a, b) => a.label.localeCompare(b.label));
 
         setCountries(formattedCountries);
-        setSelectedCountry(formattedCountries[0]); // Default country
+        if (formattedCountries.length > 0) {
+          setSelectedCountry(formattedCountries[0]);
+        }
       } catch (error) {
         console.error("Error fetching countries:", error);
       }
@@ -549,44 +600,130 @@ const MobileNumberInput = ({ formData, setFormData, errors, setErrors }) => {
     fetchCountries();
   }, []);
 
+  const customOption = ({ data, innerRef, innerProps }) => (
+    <div
+      ref={innerRef}
+      {...innerProps}
+      className="flex items-center p-2 hover:bg-gray-100 cursor-pointer"
+    >
+      <img src={data.flag} alt={data.label} className="w-6 h-4 mr-2 rounded-sm" />
+      <span>{data.label} ({data.code})</span>
+    </div>
+  );
+
+  const customSingleValue = ({ data }) => (
+    <div className="flex items-center justify-start m-0 p-0 h-full">
+      <img src={data.flag} alt={data.label} className="w-5 h-4 mr-1.5 rounded-sm flex-shrink-0" />
+      <span className="text-sm leading-tight">{data.code}</span>
+    </div>
+  );
+
   return (
     <div className="w-full mt-3">
-      <label className="block text-gray-700 font-medium mb-1">Mobile</label>
+      <label className="block text-base font-light mb-1">Mobile</label>
       <div className="flex items-center bg-white border border-[#008B02] overflow-hidden">
-        {/* Dropdown with Flag */}
-        <div className="flex items-center w-[100px] md:w-[200px] px-2 bg-white border-r-2 border-theme-green-color">
-          <img
-            src={selectedCountry.flag}
-            alt="flag"
-            className="w-6 h-4 mr-2 rounded-sm"
+        {/* Dropdown with Flag using react-select */}
+        <div className="w-[100px] md:w-[120px] flex-shrink-0 border-r-2 border-theme-green-color flex items-center">
+          <Select
+            value={selectedCountry}
+            onChange={(selected) => {
+              setSelectedCountry(selected);
+            }}
+            options={countries}
+            components={{
+              Option: customOption,
+              SingleValue: customSingleValue
+            }}
+            isSearchable={true}
+            placeholder="Code"
+            className="react-select-container"
+            classNamePrefix="react-select"
+            menuPortalTarget={typeof document !== 'undefined' ? document.body : null}
+            menuPosition="fixed"
+            onMenuOpen={() => {
+              // Focus the search input when menu opens
+              setTimeout(() => {
+                const input = document.querySelector('.react-select-container .react-select__input input');
+                if (input) input.focus();
+              }, 0);
+            }}
+            styles={{
+              control: (base, state) => ({
+                ...base,
+                border: "none",
+                boxShadow: "none",
+                minHeight: "38px",
+                height: "38px",
+                backgroundColor: "transparent",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                "&:hover": {
+                  border: "none"
+                }
+              }),
+              valueContainer: (base) => ({
+                ...base,
+                padding: "0 6px",
+                margin: 0,
+                display: "flex",
+                alignItems: "center",
+                height: "100%",
+                overflow: "visible"
+              }),
+              input: (base) => ({
+                ...base,
+                margin: 0,
+                padding: "2px 0",
+                color: "#333"
+              }),
+              indicatorsContainer: (base) => ({
+                ...base,
+                padding: "0 4px"
+              }),
+              singleValue: (base, state) => ({
+                ...base,
+                margin: 0,
+                padding: 0,
+                display: state.isFocused ? "none" : "flex",
+                alignItems: "center",
+                lineHeight: "1",
+                overflow: "visible"
+              }),
+              indicatorSeparator: () => ({
+                display: "none"
+              }),
+              menuPortal: (base) => ({
+                ...base,
+                zIndex: 99999
+              }),
+              menu: (base) => ({
+                ...base,
+                zIndex: 99999,
+                marginTop: "4px",
+                minWidth: "350px",
+                width: "max-content"
+              }),
+              menuList: (base) => ({
+                ...base,
+                maxHeight: "300px",
+                overflowY: "auto",
+                padding: "4px 0"
+              })
+            }}
           />
-          <select
-            value={selectedCountry.code}
-            onChange={(e) =>
-              setSelectedCountry(
-                countries.find((c) => c.code === e.target.value)
-              )
-            }
-            className="appearance-none bg-white text-sm focus:outline-none cursor-pointer"
-          >
-            {countries.map((country, index) => (
-              <option key={index} value={country.code}>
-                {country.flag ? `` : ""} {country.name} ({country.code})
-              </option>
-            ))}
-          </select>
         </div>
 
         {/* Mobile Number Input */}
         <input
           type="tel"
-          placeholder={`${selectedCountry.code} 555-0123`}
+          placeholder={selectedCountry ? `${selectedCountry.code} 555-0123` : "555-0123"}
           value={formData.mobile}
           onChange={(e) => {
             setFormData({ ...formData, mobile: e.target.value });
             setErrors({ ...errors, mobile: "" });
           }}
-          className="flex-1 p-3 text-gray-700 focus:outline-none  border-l-2 border-theme-green-color"
+          className="flex-1 p-2 text-gray-700 focus:outline-none border-l-2 border-theme-green-color"
         />
       </div>
       {errors.mobile && <span className="text-red-500">{errors.mobile}</span>}

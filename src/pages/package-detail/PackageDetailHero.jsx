@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import hero from "./../../assets/images/hero.png";
+import hero from "./../../assets/images/hero.webp";
 import {
   AccomadationIcon,
   TravelTimeIcon,

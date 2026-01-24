@@ -5,6 +5,7 @@ import call from "./../../assets/images/icons/call.svg";
 import email from "./../../assets/images/icons/email.svg";
 import address from "./../../assets/images/icons/address.svg";
 import clock from "./../../assets/images/icons/clock.svg";
+import Loader from "../../components/ui/Loader";
 
 export const ContactUs = ({ scrollRef }) => {
   const [formData, setFormData] = useState({
@@ -14,6 +15,7 @@ export const ContactUs = ({ scrollRef }) => {
     message: ""
   });
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const controls = useAnimation();
   const [ref, inView] = useInView({ threshold: 0.2 });
@@ -41,9 +43,10 @@ export const ContactUs = ({ scrollRef }) => {
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
+      setLoading(true);
       try {
-        // const response = await fetch("http://localhost:5000/contact", {
-        const response = await fetch("https://backend.slimlineholidays.com/contact", {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+        const response = await fetch(`${apiUrl}/contacts`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -66,6 +69,8 @@ export const ContactUs = ({ scrollRef }) => {
       } catch (error) {
         console.error("Error:", error);
         alert("An error occurred. Please try again later.");
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -176,9 +181,17 @@ export const ContactUs = ({ scrollRef }) => {
 
         <button
           type="submit"
-          className="p-2 w-fit px-16 border border-[#038B06] text-[#038B06]"
+          disabled={loading}
+          className="p-2 w-fit px-16 border border-[#038B06] text-[#038B06] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
-          Submit
+          {loading ? (
+            <>
+              <div className="w-4 h-4 border-2 border-[#038B06] border-t-transparent rounded-full animate-spin"></div>
+              <span>Submitting...</span>
+            </>
+          ) : (
+            "Submit"
+          )}
         </button>
       </motion.form>
     </section>

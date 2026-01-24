@@ -1,12 +1,40 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { StarWhiteIcon, StarYellowIcon } from "../../utils/icons";
 import { Link } from "react-router-dom";
-import { packages } from "../../utils/dataArrays";
+import Loader from "../../components/ui/Loader";
 
 export const PackagesBody = () => {
- 
+  const [packages, setPackages] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPackages = async () => {
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+        const response = await fetch(`${apiUrl}/packages`);
+        const data = await response.json();
+        if (data && data.packages && Array.isArray(data.packages)) {
+          setPackages(data.packages);
+        }
+      } catch (error) {
+        console.error("Error fetching packages:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPackages();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="px-[5%] md:px-[10%] w-full bg-white flex flex-col justify-center items-center md:py-[4%] pt-[15%] md:pt-[4%] font-nunito">
+        <Loader size="md" />
+      </section>
+    );
+  }
 
   return (
     <>
@@ -24,7 +52,7 @@ export const PackagesBody = () => {
           {packages
             .filter((item) => item.country === "Sri Lanka")
             .map((item, packageIndex) => {
-              return <PakcageCard data={item} />;
+              return <PakcageCard key={item.id || packageIndex} data={item} />;
             })}
         </div>
         <div className="mt-3 w-full text-theme-green-middle-color text-[20px] md:text-[25px] font-bold md:font-semibold">
@@ -35,7 +63,7 @@ export const PackagesBody = () => {
           {packages
             .filter((item) => item.country === "Maldives")
             .map((item, packageIndex) => {
-              return <PakcageCard data={item} />;
+              return <PakcageCard key={item.id || packageIndex} data={item} />;
             })}
         </div>
         <div className="mt-3 w-full text-theme-green-middle-color text-[20px] md:text-[25px] font-bold md:font-semibold">
@@ -46,7 +74,7 @@ export const PackagesBody = () => {
           {packages
             .filter((item) => item.country === "UAE")
             .map((item, packageIndex) => {
-              return <PakcageCard data={item} />;
+              return <PakcageCard key={item.id || packageIndex} data={item} />;
             })}
         </div>
       </section>
@@ -100,7 +128,7 @@ const PakcageCard = ({ data }) => {
           </div>
           <div className="flex flex-col gap-2 items-end">
             <span className="bg-theme-green-middle-color p-1 px-3 text-white font-semibold text-[10px] mb-1 w-fit">
-              Sri Lanka
+              {data.country || "Sri Lanka"}
             </span>
             <div className="flex items-center gap-1">
               <StarWhiteIcon />

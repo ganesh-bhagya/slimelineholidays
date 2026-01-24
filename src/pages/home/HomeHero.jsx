@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { motion, AnimatePresence } from "framer-motion";
-import hero from "./../../assets/images/hero.png";
+import hero from "./../../assets/images/hero.webp";
 import { CalanderNewIcon, DurationIcon, LocationIcon } from "../../utils/icons";
 import { EnquireModal } from "./EnquireModal";
 

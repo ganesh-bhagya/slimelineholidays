@@ -7,7 +7,9 @@ import {
 } from "@headlessui/react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import Select from "react-select";
 import { CloseIcon } from "../../utils/icons";
+import Loader from "../../components/ui/Loader";
 
 export const EnquireModal = ({
   open,
@@ -23,6 +25,7 @@ export const EnquireModal = ({
     return date;
   };
   // const [open, setOpen] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -87,11 +90,11 @@ export const EnquireModal = ({
     const newErrors = validate();
     setErrors(newErrors);
 
-    console.log(newErrors);
     if (Object.keys(newErrors).length === 0) {
+      setLoading(true);
       try {
-        // const response = await fetch("http://localhost:5000/submit", {
-        const response = await fetch("https://backend.slimlineholidays.com/submit", {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+        const response = await fetch(`${apiUrl}/enquiries`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -125,6 +128,8 @@ export const EnquireModal = ({
       } catch (error) {
         console.error("Error:", error);
         alert("Error occurred while submitting the form.");
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -280,9 +285,17 @@ export const EnquireModal = ({
                 <div className=" w-full flex justify-end">
                   <button
                     onClick={handleSubmit}
-                    className="p-2 w-fit px-16 border border-[#038B06] text-[#038B06] mt-5 "
+                    disabled={loading}
+                    className="p-2 w-fit px-16 border border-[#038B06] text-[#038B06] mt-5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
-                    Submit
+                    {loading ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-[#038B06] border-t-transparent rounded-full animate-spin"></div>
+                        <span>Submitting...</span>
+                      </>
+                    ) : (
+                      "Submit"
+                    )}
                   </button>
                 </div>
               </div>
@@ -296,28 +309,187 @@ export const EnquireModal = ({
 
 const MobileNumberInput = ({ formData, setFormData, errors, setErrors }) => {
   const [countries, setCountries] = useState([]);
-  const [selectedCountry, setSelectedCountry] = useState({});
-  const [mobileNumber, setMobileNumber] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState(null);
 
   // Fetch countries from REST Countries API
   useEffect(() => {
     const fetchCountries = async () => {
       try {
-        const response = await fetch("https://restcountries.com/v3.1/all");
+        const response = await fetch("https://restcountries.com/v3.1/all?fields=name,idd,flags");
         const data = await response.json();
 
         const formattedCountries = data
           .map((country) => ({
-            name: country.name.common,
+            label: country.name.common,
+            value: country.name.common,
             code:
               country.idd.root +
               (country.idd.suffixes ? country.idd.suffixes[0] : ""),
             flag: country.flags.svg
           }))
-          .filter((country) => country.code);
+          .filter((country) => country.code)
+          .sort((a, b) => a.label.localeCompare(b.label));
 
         setCountries(formattedCountries);
-        setSelectedCountry(formattedCountries[0]); // Default country
+        if (formattedCountries.length > 0) {
+          setSelectedCountry(formattedCountries[0]);
+        }
+      } catch (error) {
+        console.error("Error fetching countries:", error);
+      }
+    };
+
+    fetchCountries();
+  }, []);
+
+  const customOption = ({ data, innerRef, innerProps }) => (
+    <div
+      ref={innerRef}
+      {...innerProps}
+      className="flex items-center p-2 hover:bg-gray-100 cursor-pointer"
+    >
+      <img src={data.flag} alt={data.label} className="w-6 h-4 mr-2 rounded-sm" />
+      <span>{data.label} ({data.code})</span>
+    </div>
+  );
+
+  const customSingleValue = ({ data }) => (
+    <div className="flex items-center justify-start m-0 p-0 h-full">
+      <img src={data.flag} alt={data.label} className="w-5 h-4 mr-1.5 rounded-sm flex-shrink-0" />
+      <span className="text-sm leading-tight">{data.code}</span>
+    </div>
+  );
+
+  return (
+    <div className="w-full mt-3">
+      <label className="block text-base font-light mb-1">Mobile</label>
+      <div className="flex items-center bg-white border border-[#008B02] overflow-hidden">
+        {/* Dropdown with Flag using react-select */}
+        <div className="w-[100px] md:w-[120px] flex-shrink-0 border-r-2 border-theme-green-color flex items-center">
+          <Select
+            value={selectedCountry}
+            onChange={(selected) => {
+              setSelectedCountry(selected);
+            }}
+            options={countries}
+            components={{
+              Option: customOption,
+              SingleValue: customSingleValue
+            }}
+            isSearchable={true}
+            placeholder="Code"
+            className="react-select-container"
+            classNamePrefix="react-select"
+            menuPortalTarget={typeof document !== 'undefined' ? document.body : null}
+            menuPosition="fixed"
+            onMenuOpen={() => {
+              // Focus the search input when menu opens
+              setTimeout(() => {
+                const input = document.querySelector('.react-select-container .react-select__input input');
+                if (input) input.focus();
+              }, 0);
+            }}
+            styles={{
+              control: (base, state) => ({
+                ...base,
+                border: "none",
+                boxShadow: "none",
+                minHeight: "38px",
+                height: "38px",
+                backgroundColor: "transparent",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                "&:hover": {
+                  border: "none"
+                }
+              }),
+              valueContainer: (base) => ({
+                ...base,
+                padding: "0 6px",
+                margin: 0,
+                display: "flex",
+                alignItems: "center",
+                height: "100%"
+              }),
+              input: (base) => ({
+                ...base,
+                margin: 0,
+                padding: "2px 0",
+                color: "#333"
+              }),
+              indicatorsContainer: (base) => ({
+                ...base,
+                padding: "0 4px"
+              }),
+              singleValue: (base, state) => ({
+                ...base,
+                margin: 0,
+                padding: 0,
+                display: state.isFocused ? "none" : "flex",
+                alignItems: "center",
+                lineHeight: "1"
+              }),
+              indicatorSeparator: () => ({
+                display: "none"
+              }),
+              menuPortal: (base) => ({
+                ...base,
+                zIndex: 99999
+              }),
+              menu: (base) => ({
+                ...base,
+                zIndex: 99999,
+                marginTop: "4px",
+                minWidth: "350px",
+                width: "max-content"
+              }),
+              menuList: (base) => ({
+                ...base,
+                maxHeight: "300px",
+                overflowY: "auto",
+                padding: "4px 0"
+              })
+            }}
+          />
+        </div>
+
+        {/* Mobile Number Input */}
+        <input
+          type="tel"
+          placeholder={selectedCountry ? `${selectedCountry.code} 555-0123` : "555-0123"}
+          value={formData.mobile}
+          onChange={(e) => {
+            setFormData({ ...formData, mobile: e.target.value });
+            setErrors({ ...errors, mobile: "" });
+          }}
+          className="flex-1 p-2 text-gray-700 focus:outline-none border-l-2 border-theme-green-color"
+        />
+      </div>
+      {errors.mobile && <span className="text-red-500">{errors.mobile}</span>}
+    </div>
+  );
+};
+
+const CountryDropdown = ({ formData, setFormData, errors, setErrors }) => {
+  const [countries, setCountries] = useState([]);
+  const [selectedOption, setSelectedOption] = useState(null);
+
+  // Fetch country list from REST Countries API
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const response = await fetch("https://restcountries.com/v3.1/all?fields=name");
+        const data = await response.json();
+
+        const formattedCountries = data
+          .map((country) => ({
+            value: country.name.common,
+            label: country.name.common
+          }))
+          .sort((a, b) => a.label.localeCompare(b.label)); // Sort alphabetically
+
+        setCountries(formattedCountries);
       } catch (error) {
         console.error("Error fetching countries:", error);
       }
@@ -328,99 +500,34 @@ const MobileNumberInput = ({ formData, setFormData, errors, setErrors }) => {
 
   return (
     <div className="w-full mt-3">
-      <label className="block text-base font-light mb-1">Mobile</label>
-      <div className="flex items-center bg-white border border-[#008B02] overflow-hidden">
-        {/* Dropdown with Flag */}
-        <div className="flex items-center w-[100px] md:w-[150px] px-2 bg-white border-r-2 border-theme-green-color">
-          <img
-            src={selectedCountry.flag}
-            alt="flag"
-            className="w-6 h-4 mr-2 rounded-sm"
-          />
-          <select
-            value={selectedCountry.code}
-            onChange={(e) =>
-              setSelectedCountry(
-                countries.find((c) => c.code === e.target.value)
-              )
-            }
-            className="appearance-none bg-white text-sm focus:outline-none cursor-pointer"
-          >
-            {countries.map((country, index) => (
-              <option key={index} value={country.code}>
-                {country.flag ? `` : ""} {country.name} ({country.code})
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Mobile Number Input */}
-        <input
-          type="tel"
-          placeholder={`${selectedCountry.code} 555-0123`}
-          value={formData.mobile}
-          onChange={(e) => {
-            setFormData({ ...formData, mobile: e.target.value });
-            setErrors({ ...errors, mobile: "" });
-          }}
-          className="flex-1 p-2 text-gray-700 focus:outline-none  border-l-2 border-theme-green-color"
-        />
-      </div>
-      {errors.mobile && <span className="text-red-500">{errors.mobile}</span>}
-    </div>
-  );
-};
-
-const CountryDropdown = ({ formData, setFormData, errors, setErrors }) => {
-  const [countries, setCountries] = useState([]);
-  const [selectedCountry, setSelectedCountry] = useState("");
-
-  // Fetch country list from REST Countries API
-  useEffect(() => {
-    const fetchCountries = async () => {
-      try {
-        const response = await fetch("https://restcountries.com/v3.1/all");
-        const data = await response.json();
-
-        const formattedCountries = data
-          .map((country) => ({
-            name: country.name.common
-          }))
-          .sort((a, b) => a.name.localeCompare(b.name)); // Sort alphabetically
-
-        setCountries(formattedCountries);
-        setFormData({
-          ...formData,
-          livingCountry: formattedCountries[0]?.name
-        });
-      } catch (error) {
-        console.error("Error fetching countries:", error);
-      }
-    };
-
-    fetchCountries();
-  }, []);
-
-  return (
-    <div className="w-full mt-5">
       <label className="block text-base font-light mb-1">Living Country</label>
-      <select
-        value={formData.livingCountry}
-        onChange={(e) => {
-          setFormData({ ...formData, livingCountry: e.target.value });
+      <Select
+        value={selectedOption}
+        onChange={(selected) => {
+          setSelectedOption(selected);
+          setFormData({ ...formData, livingCountry: selected?.value || "" });
           setErrors({ ...errors, livingCountry: "" });
         }}
-        className="block w-full p-2 border border-[#008B02]  bg-white text-gray-700 focus:outline-none focus:border-green-500"
-      >
-        <option value="" disabled>
-          Select a country
-        </option>
-        {countries.map((country, index) => (
-          <option key={index} value={country.name}>
-            {country.name}
-          </option>
-        ))}
-      </select>
+        options={countries}
+        isSearchable
+        placeholder="Select a country"
+        className="react-select-container"
+        classNamePrefix="react-select"
+        styles={{
+          control: (base) => ({
+            ...base,
+            borderColor: "#008B02",
+            "&:hover": {
+              borderColor: "#008B02"
+            },
+            boxShadow: "none"
+          }),
+          menu: (base) => ({
+            ...base,
+            zIndex: 9999
+          })
+        }}
+      />
       {errors.livingCountry && (
         <span className="text-red-500">{errors.livingCountry}</span>
       )}
@@ -433,7 +540,7 @@ const UseCountryDropdown = ({ formData, setFormData, errors, setErrors }) => {
   const [selectedTravelCountry, setSelectedTravelCountry] = useState("");
 
   return (
-    <div className="w-full  mt-5">
+    <div className="w-full mt-3">
       <label className="block text-base font-light mb-1">Destination</label>
       <select
         value={formData.destination}
@@ -463,7 +570,7 @@ const ArrivalDatePicker = ({ formData, setFormData, errors, setErrors }) => {
   const [selectedDate, setSelectedDate] = useState(null);
 
   return (
-    <div className="w-full  md:mt-5">
+    <div className="w-full mt-3">
       <label className="block text-base font-light mb-1">Arrival Date</label>
       <div className="relative w-full">
         {/* Datepicker Input */}
@@ -500,7 +607,7 @@ const DepartureDatePicker = ({ formData, setFormData, errors, setErrors }) => {
   const [selectedDate, setSelectedDate] = useState(null);
 
   return (
-    <div className="w-full  mt-5">
+    <div className="w-full mt-3">
       <label className="block text-base font-light mb-1">Departure Date</label>
       <div className="relative w-full">
         {/* Datepicker Input */}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import hero from "./../../assets/images/packageshero.jpg";
+import hero from "./../../assets/images/packageshero.webp";
 
 export const PackagesHero = () => {
   return (

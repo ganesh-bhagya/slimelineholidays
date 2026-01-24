@@ -7,15 +7,15 @@ import "swiper/css/grid";
 import "swiper/css/pagination";
 import { Pagination, Autoplay } from "swiper/modules";
 
-import abtus from "./../../assets/images/awardsbg.png";
-import certificatw from "./../../assets/images/certificate/certificate.png";
-import client from "./../../assets/images/client.png";
-import gallery1 from "./../../assets/images/gallery/gallery1.png";
-import gallery2 from "./../../assets/images/gallery/gallery2.png";
-import gallery3 from "./../../assets/images/gallery/gallery3.png";
-import gallery4 from "./../../assets/images/gallery/gallery4.png";
-import gallery5 from "./../../assets/images/gallery/gallery5.png";
-import gallery6 from "./../../assets/images/gallery/gallery6.png";
+import abtus from "./../../assets/images/awardsbg.webp";
+import certificatw from "./../../assets/images/certificate/certificate.webp";
+import client from "./../../assets/images/client.webp";
+import gallery1 from "./../../assets/images/gallery/gallery1.webp";
+import gallery2 from "./../../assets/images/gallery/gallery2.webp";
+import gallery3 from "./../../assets/images/gallery/gallery3.webp";
+import gallery4 from "./../../assets/images/gallery/gallery4.webp";
+import gallery5 from "./../../assets/images/gallery/gallery5.webp";
+import gallery6 from "./../../assets/images/gallery/gallery6.webp";
 
 export const Testimonials = ({ scrollRef }) => {
   const swiperRef = useRef(null);

@@ -2,8 +2,8 @@ import React from "react";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import CountUp from "react-countup";
-import abtus from "./../../assets/images/aboutus.jpg";
-import abtus2 from "./../../assets/images/abtus2.jpg";
+import abtus from "./../../assets/images/aboutus.webp";
+import abtus2 from "./../../assets/images/abtus2.webp";
 
 export const AboutUs = ({ scrollRef }) => {
   const controls = useAnimation();
