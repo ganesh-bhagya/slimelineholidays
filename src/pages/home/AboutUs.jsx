@@ -56,9 +56,9 @@ export const AboutUs = ({ scrollRef }) => {
             Our Mission
           </div>
           <p className="text-xs md:text-base font-light text-white text-center md:text-start">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. nulla
-            pariatur.
+          To remain the world’s most trusted signature in elegant exploration. We stand as the global
+symbol of excellence, where every journey we create becomes a legacy of wonder and your leisure is
+our pleasure remains an enduring way of life.
           </p>
         </motion.div>
         <motion.div
@@ -71,9 +71,9 @@ export const AboutUs = ({ scrollRef }) => {
             Our Vision
           </div>
           <p className="text-xs md:text-base font-light text-white text-center md:text-start">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. nulla
-            pariatur.
+          To curate the extraordinary. We orchestrate seamless, soulful journeys that transcend the
+ordinary—ensuring your leisure is our pleasure through refined artistry, integrity, and the authentic
+spirit of hospitality
           </p>
         </motion.div>
       </motion.div>
@@ -101,16 +101,15 @@ export const AboutUs = ({ scrollRef }) => {
           alt=""
         />
       </motion.div>
-      <div
-        // initial={{ opacity: 0 }}
-        // animate={controls}
-        // transition={{ duration: 1, delay: 1 }}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={controls}
+        transition={{ duration: 1, delay: 1 }}
         className="absolute w-[60%] md:w-[60%] p-8 px-[10%] bg-[#F1FFF2] flex flex-col md:flex-row items-center justify-between bottom-[-20%] md:bottom-[-8%] right-[20%]"
       >
         <div className="flex flex-col justify-center items-center">
           <span className="text-[50px] text-center text-theme-green-middle-color font-bold">
-         200   
-         {/* {inView && <CountUp end={200} duration={3} />} */}
+            {inView && <CountUp end={3000} duration={3} separator="," />}+
           </span>
           <span className="text-base text-center text-black font-light">
             Amazing Tours
@@ -118,8 +117,7 @@ export const AboutUs = ({ scrollRef }) => {
         </div>
         <div className="flex flex-col justify-center items-center">
           <span className="text-[50px] text-center text-theme-green-middle-color font-bold">
-         150   
-         {/* {inView && <CountUp end={150} duration={3} />} */}
+            {inView && <CountUp end={7000} duration={3} separator="," />}+
           </span>
           <span className="text-base text-center text-black font-light">
             Happy Clients
@@ -127,14 +125,13 @@ export const AboutUs = ({ scrollRef }) => {
         </div>
         <div className="flex flex-col justify-center items-center">
           <span className="text-[50px] text-center text-theme-green-middle-color font-bold">
-           20
-            {/* {inView && <CountUp end={20} duration={3} />} */}
+            {inView && <CountUp end={24} duration={3} />}+
           </span>
           <span className="text-base text-center text-black font-light">
             Years in Business
           </span>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 };

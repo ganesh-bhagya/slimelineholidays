@@ -82,15 +82,15 @@ export const Header = ({ scrollRefs }) => {
           scrollRefs.abtus.current.scrollIntoView({ behavior: "smooth" });
         } else if (isServicesLink === "contactus") {
           scrollRefs.contactus.current.scrollIntoView({ behavior: "smooth" });
-        } else if (rerName === "faq") {
+        } else if (isServicesLink === "faq") {
           scrollRefs.faq.current.scrollIntoView({ behavior: "smooth" });
-        } else if (rerName === "testimonials") {
+        } else if (isServicesLink === "testimonials") {
           scrollRefs.testimonials.current.scrollIntoView({
             behavior: "smooth"
           });
-        } else if (rerName === "services") {
+        } else if (isServicesLink === "services") {
           scrollRefs.services.current.scrollIntoView({ behavior: "smooth" });
-        } else if (rerName === "gallery") {
+        } else if (isServicesLink === "gallery") {
           scrollRefs.gallery.current.scrollIntoView({ behavior: "smooth" });
         }
 

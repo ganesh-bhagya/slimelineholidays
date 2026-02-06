@@ -4,6 +4,7 @@ import { HomeHero } from "./HomeHero";
 import { OurPackages } from "./OurPackages";
 import { AboutUs } from "./AboutUs";
 import { WhyUs } from "./WhyUs";
+import { Services } from "./Services";
 import { HowItWorks } from "./HowItWorks";
 import { Gallery } from "./Gallery";
 import { Footer } from "../../components/layouts/Footer";
@@ -36,9 +37,10 @@ export const Home = () => {
       <OurPackages />
       <AboutUs scrollRef={scrollRefs.abtus} />
       <WhyUs />
+      <Services scrollRef={scrollRefs.services} />
       <HowItWorks />
       <Gallery scrollRef={scrollRefs.gallery} />
-      <Awards />
+      {/* <Awards /> */}
       <FAQ scrollRef={scrollRefs.faq} />
       <Testimonials scrollRef={scrollRefs.testimonials} />
       <ContactUs scrollRef={scrollRefs.contactus} />

@@ -1,9 +1,4 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
+/* #root layout is controlled by src/assets/css/style.css for full-width mobile support */
 
 .logo {
   height: 6em;
