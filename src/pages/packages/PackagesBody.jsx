@@ -121,11 +121,6 @@ const PakcageCard = ({ data }) => {
         </span>
         <div className="text-white text-[14px] mb-3 z-20">{data.name}</div>
         <div className="flex justify-between w-full items-end text-white z-20">
-          <div className="flex flex-col gap-[2px]">
-            <span className="text-[10px] font-semibold"> From</span>
-            <span className="text-[25px] font-bold"> $ {data.price}</span>
-            <span className="text-[10px] font-semibold"> per person</span>
-          </div>
           <div className="flex flex-col gap-2 items-end">
             <span className="bg-theme-green-middle-color p-1 px-3 text-white font-semibold text-[10px] mb-1 w-fit">
               {data.country || "Sri Lanka"}

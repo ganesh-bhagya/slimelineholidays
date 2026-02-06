@@ -11,6 +11,9 @@ import PackageNew from "../pages/admin/PackageNew";
 import PackageEdit from "../pages/admin/PackageEdit";
 import AdminEnquiries from "../pages/admin/Enquiries";
 import AdminContacts from "../pages/admin/Contacts";
+import AdminTestimonials from "../pages/admin/Testimonials";
+import TestimonialNew from "../pages/admin/TestimonialNew";
+import TestimonialEdit from "../pages/admin/TestimonialEdit";
 import EmailSettings from "../pages/admin/EmailSettings";
 
 const router = createBrowserRouter([
@@ -57,6 +60,18 @@ const router = createBrowserRouter([
       {
         path: "contacts",
         element: <AdminContacts />
+      },
+      {
+        path: "testimonials",
+        element: <AdminTestimonials />
+      },
+      {
+        path: "testimonials/new",
+        element: <TestimonialNew />
+      },
+      {
+        path: "testimonials/:id/edit",
+        element: <TestimonialEdit />
       },
       {
         path: "email-settings",

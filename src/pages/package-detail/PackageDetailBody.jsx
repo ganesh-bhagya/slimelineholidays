@@ -132,21 +132,13 @@ export const PackageDetailBody = ({ data }) => {
         </div>
 
         <div className=" mt-5 md:mt-0  mb-5 md:mb-0 flex flex-col md:w-[38%]">
-          <div className=" flex w-full items-start justify-between ">
-            <div className=" w-[40%] flex items-center justify-center flex-col bg-theme-green-color py-5 ">
+          <div className=" flex w-full items-start justify-center ">
+            <div className=" w-full flex items-center justify-center flex-col bg-theme-green-color py-5 ">
               <span className=" text-theme-green-middle-color text-sm md:text-base font-bold">
                 No of Days
               </span>
               <span className=" text-theme-green-middle-color text-[50px] leading-[56px] font-bold">
                 {data.days}
-              </span>
-            </div>
-            <div className=" w-[58%] flex items-center justify-center flex-col bg-theme-green-middle-color py-5 ">
-              <span className=" text-white text-sm md:text-base font-bold">
-                Per Person
-              </span>
-              <span className=" text-theme-green-color text-[50px] leading-[56px] font-bold">
-                $ {data.price}
               </span>
             </div>
           </div>

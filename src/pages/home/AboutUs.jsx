@@ -5,13 +5,23 @@ import CountUp from "react-countup";
 import abtus from "./../../assets/images/aboutus.webp";
 import abtus2 from "./../../assets/images/abtus2.webp";
 
+const COUNTUP_DURATION = 3; // seconds
+
 export const AboutUs = ({ scrollRef }) => {
   const controls = useAnimation();
   const [ref, inView] = useInView({ threshold: 0.2 });
+  const [hasCountedOnce, setHasCountedOnce] = React.useState(false);
+  const hasStartedCountRef = React.useRef(false);
 
   React.useEffect(() => {
     if (inView) {
       controls.start({ opacity: 1, y: 0 });
+      // First time in view: run count-up, then switch to static after animation ends
+      if (!hasStartedCountRef.current) {
+        hasStartedCountRef.current = true;
+        const timer = setTimeout(() => setHasCountedOnce(true), COUNTUP_DURATION * 1000);
+        return () => clearTimeout(timer);
+      }
     }
   }, [controls, inView]);
 
@@ -39,12 +49,9 @@ export const AboutUs = ({ scrollRef }) => {
           <span className="font-bold">About</span> Us
         </div>
         <p className="text-white text-center md:text-start text-xs md:text-base font-light md:w-[75%]">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur.
+        We are a passionate travel experience company dedicated to creating authentic, memorable journeys. With deep local knowledge and a strong commitment to personalized service, we help travelers explore destinations beyond the ordinary—connecting them with culture, nature, and unforgettable moments.
+
+From the first welcome to the final farewell, every detail of your journey is thoughtfully planned to ensure comfort, safety, and genuine discovery.
         </p>
         <motion.div
           initial={{ opacity: 0, y: 50 }}
@@ -109,7 +116,7 @@ spirit of hospitality
       >
         <div className="flex flex-col justify-center items-center">
           <span className="text-[50px] text-center text-theme-green-middle-color font-bold">
-            {inView && <CountUp end={3000} duration={3} separator="," />}+
+            {hasCountedOnce ? "3,000+" : inView ? <><CountUp end={3000} duration={COUNTUP_DURATION} separator="," />+</> : "0+"}
           </span>
           <span className="text-base text-center text-black font-light">
             Amazing Tours
@@ -117,7 +124,7 @@ spirit of hospitality
         </div>
         <div className="flex flex-col justify-center items-center">
           <span className="text-[50px] text-center text-theme-green-middle-color font-bold">
-            {inView && <CountUp end={7000} duration={3} separator="," />}+
+            {hasCountedOnce ? "7,000+" : inView ? <><CountUp end={7000} duration={COUNTUP_DURATION} separator="," />+</> : "0+"}
           </span>
           <span className="text-base text-center text-black font-light">
             Happy Clients
@@ -125,7 +132,7 @@ spirit of hospitality
         </div>
         <div className="flex flex-col justify-center items-center">
           <span className="text-[50px] text-center text-theme-green-middle-color font-bold">
-            {inView && <CountUp end={24} duration={3} />}+
+            {hasCountedOnce ? "24+" : inView ? <><CountUp end={24} duration={COUNTUP_DURATION} />+</> : "0+"}
           </span>
           <span className="text-base text-center text-black font-light">
             Years in Business

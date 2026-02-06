@@ -160,6 +160,16 @@ export default function AdminLayout() {
               Contacts
             </Link>
             <Link
+              to="/admin/testimonials"
+              className={`block px-4 py-2 rounded-md transition-colors ${
+                pathname === "/admin/testimonials" || pathname.startsWith("/admin/testimonials/")
+                  ? "bg-theme-green-color text-white"
+                  : "text-gray-700 hover:bg-gray-100"
+              }`}
+            >
+              Testimonials
+            </Link>
+            <Link
               to="/admin/email-settings"
               className={`block px-4 py-2 rounded-md transition-colors ${
                 pathname === "/admin/email-settings"
